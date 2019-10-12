@@ -35,6 +35,7 @@ BYTE* key[] = {0x16, 0xab, 0xf7, 0x28, 0xae, 0xd2, 0xa6, 0x7e, 0x2b, 0x15, 0x88,
 void expandKey(BYTE *key, BYTE *roundKey){
 
     /* 추가 구현 */
+	
     
 }
 
@@ -78,7 +79,7 @@ void expandKey(BYTE *key, BYTE *roundKey){
 			{
 				x = block[i]>>4; // i(xAB)'s A
 				y = (block[i]-(x<<4)); // i(xAB)'s B
-				block[i] = SBox[x][y];
+				block[i] = SBox[(int)x][(int)y];
 			}
 
 		
@@ -112,7 +113,7 @@ void expandKey(BYTE *key, BYTE *roundKey){
 			{
 				x = block[i]>>4; // i(xAB)'s A
 				y = (block[i]-(x<<4)); // i(xAB)'s B
-				block[i] = SBox[x][y];
+				block[i] = SBox[(int)x][(int)y];
 			}
 
         break;
@@ -157,6 +158,24 @@ BYTE* shiftRows(BYTE *block, int mode){
     return block;
 }
 
+BYTE calcCol(BYTE s, BYTE mat){
+
+	BTYE buffer = 0;
+	BYTE filter = 0x01;
+
+	for(int i=0; i < 8; i++){
+		if(s & filter)
+			buffer ^= s; // 1일 때 XOR
+
+		if(s & 0x80)
+			s ^= (s << 1) ^ 0x1b; // 8byte를 넘을 때 0x1b XOR
+		else
+			s ^= s << 1; // 8byte를 넘지 않을 땐 그냥 shift
+
+		filter <<= 1; // 모든 1의 위치 체크를 위한
+	}
+
+}
 
 /*  <MixColumns 함수>
  *   
@@ -167,18 +186,19 @@ BYTE* mixColumns(BYTE *block, int mode){
     /* 필요하다 생각하면 추가 선언 */   
 	BYTE buffer[16];
 	BYTE matrix[16] = {2, 3, 1, 1, 1, 2, 3, 1, 1, 1, 2, 3, 3, 1, 1, 2};
-	BYTE In_matrix[16] = {2, 1, 1, 3, 3, 2, 1, 1, 1, 3, 2, 1, 1, 1, 3, 2};
+	BYTE In_matrix[16] = {0x0E, 0x0B, 0x0D, 0x09, 0x09, 0x0E, 0x0B, 0x0D, 0x0D, 0x09, 0x0E, 0x0B, 0x0B, 0x0D, 0x09, 0x0E};
     switch(mode){
 
         case ENC:
             
 			/* 추가 구현 */
-			for(i=0; i<16; i++)
+			for(i = 0; i < 16; i++)
 			{
-				buffer[i] = matrix[(i/4)*4 + i%4]*block[i%4] ^
-							matrix[(i/4)*4 + i%4 + 1]*block[i%4 + 4] ^
-							matrix[(i/4)*4 + i%4 + 2]*block[i%4 + 8] ^
-							matrix[(i/4)*4 + i%4 + 3]*block[i%4 + 12];   
+				for(j = 0; j < 4; j++)
+				{
+					BYTE s = block[i];
+					buffer[i] ^= calcCol(block[(int)(i%4) + j*4], matrix[(int)(i/4) + j])
+				}
 			}
 
             break;
@@ -186,14 +206,14 @@ BYTE* mixColumns(BYTE *block, int mode){
         case DEC:
 
             /* 추가 구현 */
- 			for(i=0; i<16; i++)
+			for(i = 0; i < 16; i++)
 			{
-				buffer[i] = In_matrix[(i/4)*4 + i%4]*block[i%4] ^
-							In_matrix[(i/4)*4 + i%4 + 1]*block[i%4 + 4] ^
-							In_matrix[(i/4)*4 + i%4 + 2]*block[i%4 + 8] ^
-							In_matrix[(i/4)*4 + i%4 + 3]*block[i%4 + 12];   
+				for(j = 0; j < 4; j++)
+				{
+					BYTE s = block[i];
+					buffer[i] ^= calcCol(block[(int)(i%4) + j*4], In_matrix[(int)(i/4) + j])
+				}
 			}
-
             break;
 
         default:
@@ -212,6 +232,12 @@ BYTE* mixColumns(BYTE *block, int mode){
  */
 BYTE* addRoundKey(BYTE *block, BYTE *rKey){
     /* 추가 구현 */
+
+	for(int i=0; i < 16; i++)
+	{
+		block[i] = block[i] ^ rKey[i];
+	}
+
     return block;
 }
 
