@@ -22,7 +22,7 @@
 #define BLOCK_SIZE 16
 
 /* 기타 필요한 전역 변수 추가 선언 */
-BYTE *rcon[10][4] = 
+BYTE rcon[10][4] = 
 	{
 		{0x01, 0x00, 0x00, 0x00},
 		{0x02, 0x00, 0x00, 0x00},
@@ -81,19 +81,19 @@ BYTE SBoxInverse[KEY_SIZE][KEY_SIZE]=
 	};
 
 /* 기타 필요한 함수 추가 선언 및 정의 */
-BYTE subWord(BYTE w[])
+BYTE* subWord(BYTE *w)
 {
-	BYTE* temp[4];
-	memcpy(temp, w[0], sizeof(BYTE)*4);
+	BYTE temp[4];
+	memcpy(temp, &w[0], sizeof(BYTE)*4);
 	
 	w[0] = w[1];
 	w[1] = w[2];
 	w[2] = w[3];
-	memcpy(w[3], temp, sizeof(BYTE)*4);
+	memcpy(&w[3], temp, sizeof(BYTE)*4);
 	
 	for(int i = 0; i < BLOCK_SIZE/4; i++)
 	{
-		subBytes(w[i], 1);
+		subBytes(&w[i], 1);
 	}
 		
 	return w;
@@ -161,7 +161,6 @@ void expandKey(BYTE *key, BYTE *roundKey){
 				y = (block[i]-(x<<4)); // i(xAB)'s B
 				block[i] = SBox[x][y];
 			}
-
 		
             break;
 
@@ -176,7 +175,7 @@ void expandKey(BYTE *key, BYTE *roundKey){
 				block[i] = SBox[x][y];
 			}
 
-        break;
+        	break;
 
         default:
             fprintf(stderr, "Invalid mode!\n");
