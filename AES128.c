@@ -36,7 +36,7 @@ BYTE rcon[10][4] =
 		{0x36, 0x00, 0x00, 0x00},
 	};
 
-BYTE* expkey[44][4];
+BYTE expkey[ROUNDKEY_SIZE];
 
 BYTE SBox[KEY_SIZE][KEY_SIZE]=
 	{
@@ -84,28 +84,34 @@ BYTE SBoxInverse[KEY_SIZE][KEY_SIZE]=
 BYTE* subWord(BYTE *w)
 {
 	BYTE temp[4];
-	memcpy(temp, &w[0], sizeof(BYTE)*4);
-	
-	w[0] = w[1];
-	w[1] = w[2];
-	w[2] = w[3];
-	memcpy(&w[3], temp, sizeof(BYTE)*4);
+	memcpy(temp, w, sizeof(BYTE)*4);
+	memcpy(w, w + 1, sizeof(BYTE)*4);
+	memcpy(w + 1, w + 2, sizeof(BYTE)*4);
+	memcpy(w + 2, w + 3, sizeof(BYTE)*4);
+	memcpy(w + 3, temp, sizeof(BYTE)*4);
 	
 	for(int i = 0; i < BLOCK_SIZE/4; i++)
 	{
-		subBytes(&w[i], 1);
+		subBytes(w + i, 1);
 	}
 		
 	return w;
 }	
 
-BYTE xor_4(BYTE a[], BYTE b[]) 
+BYTE* xor_4(BYTE *a, BYTE *b)
 {
+	
 	a[0] ^= b[0];
 	a[1] ^= b[1];
 	a[2] ^= b[2];
 	a[3] ^= b[3];
 
+	/*
+	memcpy(a, a[0] ^ b[0], sizeof(BYTE));
+	memcpy(a + 1, a[1] ^ b[1], sizeof(BYTE));
+	memcpy(a + 2, a[2] ^ b[2]), sizeof(BYTE));
+	memcpy(a + 3, a[3] ^ b[3], sizeof(BYTE));
+	*/
 	return a;
 }	
 /*  <키스케줄링 함수>
@@ -117,26 +123,28 @@ BYTE xor_4(BYTE a[], BYTE b[])
 void expandKey(BYTE *key, BYTE *roundKey){
 
     /* 추가 구현 */
-	BYTE w[ROUNDKEY_SIZE/4][KEY_SIZE/4];
+	BYTE* w[ROUNDKEY_SIZE/4];
 	BYTE buffer[4];
 	for(int i = 0; i < KEY_SIZE/4; i++)
 	{
-		w[i][0] = key[i*4];
-		w[i][1] = key[i*4 + 1];
-		w[i][2] = key[i*4 + 2];
-		w[i][3] = key[i*4 + 3];
+		memcpy(w + i, key + i*4, sizeof(BYTE)*4);
+
+		/*w + i + 1 = key + i*4 + 1;
+		w + i + 2 = key + i*4 + 2;
+		w + i + 3 = key + i*4 + 3;*/
 	}
 
 	for(int i = 4; i < ROUNDKEY_SIZE/4; i++)
     {
-		memcpy(buffer, w[i - 1], sizeof(BYTE)*4);
+		memcpy(buffer, w + i - 1, sizeof(BYTE)*4);
 		if(i % 4 == 0)
 			memcpy(buffer, xor_4(subWord(buffer), rcon[(int)(i/4) - 1]), sizeof(BYTE)*4);
 
-		memcpy(w[i], xor_4(w[i - KEY_SIZE/4], buffer), sizeof(BYTE)*4);
+		memcpy(w + i, xor_4(w + i - KEY_SIZE/4, buffer), sizeof(BYTE)*4);
 	}
 
-	memcpy(roundKey, w, sizeof(w));
+	printf("fdfafdsafdsa\n");
+	memcpy(roundKey, w, sizeof(BYTE)*ROUNDKEY_SIZE);
 }
 
 
@@ -202,18 +210,18 @@ BYTE* shiftRows(BYTE *block, int mode){
 
         case ENC:
             /* 추가 구현 */
-			for(int i = 0; i < BLOCK_SIZE; i++){buffer[i] = block[shift[i]];}
+			for(int i = 0; i < BLOCK_SIZE; i++){memcpy(buffer[i], &block[shift[i]], sizeof(BYTE));}
             break;
         case DEC:
 		    /* 추가 구현 */
-			for(int i = 0; i < BLOCK_SIZE; i++){buffer[i] = block[In_shift[i]];}
+			for(int i = 0; i < BLOCK_SIZE; i++){memcpy(buffer[i],&block[In_shift[i]], sizeof(BYTE));}
             break;
         default:
             fprintf(stderr, "Invalid mode!\n");
             exit(1);
     }
 
-    block = buffer;
+    memcpy(block, buffer, sizeof(buffer));
     return block;
 }
 
@@ -327,27 +335,36 @@ BYTE* addRoundKey(BYTE *block, BYTE *rKey){
  *  result  결과(평문)가 담길 바이트 배열. 호출하는 사용자가 사전에 메모리를 할당하여 파라미터로 넘어옴
  *  key     128비트 암호키 (16바이트)
  */
-BYTE getRoundKey(int i, BYTE* expkey)
+void getRoundKey(int i, BYTE *expkey, BYTE *rkey)
 {
-	BYTE temp[4] = {expkey[i], expkey[i + 1], expkey[i + 2], expkey[i + 3]};
-	return temp;
+	//BYTE* temp[4][4];
+	//memcpy(temp, 0, sizeof(BYTE)*KEY_SIZE);
+	
+	for(int j = 0; j < 4; j++)
+	{
+		memcpy(rkey + j, expkey + i*4 + j, sizeof(BYTE)*4);
+	}
+	
+	//temp = {expkey[i*4], expkey[i*4 + 1], expkey[i*4 + 2], expkey[i*4 + 3]};
+	//return temp;
 }
 
-BYTE getBlock(BYTE* input, int num)
+void getBlock(BYTE* input, int num, BYTE* block)
 {
-	BYTE temp[16];
+	//BYTE* temp[16];
+	
 	for(int i = 0; i < 16; i ++)
 	{
-		temp[i] = input[num*16 + i];
+		memcpy(block + i, input + num*16 + i, sizeof(BYTE));
 	}
-	return temp;
+	//return temp;
 }
 
 void AES128(BYTE *input, BYTE *result, BYTE *key, int mode){
 
-	BYTE* block[16];
+	BYTE block[16];
 	int i, con;
-
+	
 	expandKey(key, expkey);
     if(mode == ENC){
 
@@ -366,14 +383,17 @@ void AES128(BYTE *input, BYTE *result, BYTE *key, int mode){
         exit(1);
     }
 
+	printf("con = %d\n", con);
 	do
 	{
-		BYTE* rkey[4][4];
-		memcpy(rkey, getRoundKey(i, key), sizeof(BYTE)*KEY_SIZE); 
+		BYTE rkey[16];
+		getRoundKey(i, expkey, rkey);
+		//memcpy(rkey, getRoundKey(i, expkey), sizeof(BYTE)*KEY_SIZE); 
 	
 		for(int j = 0; j < 64/BLOCK_SIZE; j++)
 		{
-			memcpy(block, getBlock(input, j), sizeof(BYTE) * 16);
+			//memcpy(block, getBlock(input, j), sizeof(BYTE) * 16);
+			getBlock(input, j, block);
 			addRoundKey(block, rkey);
 			subBytes(block, mode);
 			shiftRows(block, mode);
@@ -381,7 +401,7 @@ void AES128(BYTE *input, BYTE *result, BYTE *key, int mode){
 
 			for(int k = 0; k < 16; k++)
 			{
-				memcpy(input[j*16 + k], block[k], sizeof(BYTE));
+				input[j*16 + k] = block[k];
 			}
 		}
 		i += con;
@@ -389,13 +409,15 @@ void AES128(BYTE *input, BYTE *result, BYTE *key, int mode){
 
 	i += con;
 
-	BYTE* rkey[4][4];
-	memcpy(rkey, getRoundKey(9, key), sizeof(BYTE)*KEY_SIZE); 
+	BYTE rkey[16];
+	getRoundKey(9, expkey, rkey);
+	//memcpy(rkey, getRoundKey(9, key), sizeof(BYTE)*KEY_SIZE); 
 
 	addRoundKey(block, rkey);
 	subBytes(block, mode);
 	shiftRows(block, mode);
 		
 	addRoundKey(block, rkey);
+	
 }
 
