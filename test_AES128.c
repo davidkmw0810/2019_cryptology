@@ -66,6 +66,7 @@ int main(){
                 result[i * 16 + j] = result[(i - 1) * 16 + j] ^ plain[i * 16 + j];
 
         AES128(result + i * 16, tmpBlock, key, ENC);
+        printf("aa\n");
         memcpy(result + i * 16, tmpBlock, sizeof(BYTE) * 16);
     }
 
