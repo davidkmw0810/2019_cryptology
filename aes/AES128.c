@@ -94,7 +94,7 @@ BYTE* subWord(BYTE *w)
 	{
 		subBytes(w + i, 1);
 	}
-		
+
 	return w;
 }	
 
@@ -116,11 +116,17 @@ BYTE* xor_4(BYTE *a, BYTE *b)
 void expandKey(BYTE *key, BYTE *roundKey){
 
     /* 추가 구현 */
-	BYTE* w[ROUNDKEY_SIZE/4];
-	BYTE buffer[4];
+	//BYTE* w[ROUNDKEY_SIZE/4];
+	BYTE *buffer[4];
+	for(int i = 0; i<5; i++)
+	{
+		printf("%x ", buffer[i]);
+	}
+	printf("\n");
+
 	for(int i = 0; i < KEY_SIZE/4; i++)
 	{
-		memcpy(w + i, key + i*4, sizeof(BYTE)*4);
+		memcpy(roundKey + i, key + i*4, sizeof(BYTE)*4);
 
 		/*w + i + 1 = key + i*4 + 1;
 		w + i + 2 = key + i*4 + 2;
@@ -129,16 +135,16 @@ void expandKey(BYTE *key, BYTE *roundKey){
 
 	for(int i = 4; i < ROUNDKEY_SIZE/4; i++)
     {
-		memcpy(buffer, w + i - 1, sizeof(BYTE)*4);
+		memcpy(buffer, roundKey + i - 1, sizeof(BYTE)*4);
 
 		if(i % 4 == 0)
 			memcpy(buffer, xor_4(subWord(buffer), *rcon + ((int)(i/4) - 1)), sizeof(BYTE)*4);
 
-		memcpy(w + i, xor_4(w + i - KEY_SIZE/4, buffer), sizeof(BYTE)*4);
+		memcpy(roundKey + i, xor_4(roundKey + i - KEY_SIZE/4, buffer), sizeof(BYTE)*4);
 	
 	}
 
-	memcpy(roundKey, w, sizeof(BYTE)*ROUNDKEY_SIZE);
+	//memcpy(roundKey, w, sizeof(BYTE)*ROUNDKEY_SIZE);
 }
 
 
@@ -350,18 +356,17 @@ void AES128(BYTE *input, BYTE *result, BYTE *key, int mode){
 	int i, con;
 	
 	expandKey(key, expkey);
+	printf("already expandKey\n");
     if(mode == ENC){
 
         /* 추가 작업이 필요하다 생각하면 추가 구현 */    
 		i = 0;
 		con = 1;		
-		
     }else if(mode == DEC){
 
         /* 추가 작업이 필요하다 생각하면 추가 구현 */    
 		i = 9;
 		con = -1;		
-	
     }else{
         fprintf(stderr, "Invalid mode!\n");
         exit(1);
