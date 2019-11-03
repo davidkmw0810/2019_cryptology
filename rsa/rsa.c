@@ -12,9 +12,6 @@
 #include <time.h>
 #include "rsa.h"
 
-//#define "+" 43;
-//#define "-" 45;
-
 llint p, q, e, d, n;
 
 llint Mod(llint num, llint n){
@@ -183,6 +180,22 @@ llint ModInv(llint a, llint m) {
  */
 void miniRSAKeygen(llint *p, llint *q, llint *e, llint *d, llint *n) {
 
+    do{
+        p = (llint)WELLRNG512a()*((2^64 - 1) - (2^53 + 1)) + (2^53 + 1);
+    } while(IsPrime(p, 4));
+
+    do{
+        q = (llint)WELLRNG512a()*((2^64 - 1) - (2^53 + 1)) + (2^53 + 1);
+    } while(IsPrime(q, 4));
+
+    n = p*q;
+    llint pi_n = (p - 1)*(q - 1);
+
+    while(GCD(pi_n, e) != 1)
+        e = (llint)WELLRNG512a()*(pi_n - 4) + 3;
+
+    d = e*pi_n;
+
 }
 
 /*
@@ -244,11 +257,12 @@ int main(int argc, char* argv[]) {
 
     printf("%lf", WELLRNG512a());
     */
-    llint a = 3;
-    llint b = 7;
-    llint c = WELLRNG512a()*100;
-    llint m = ModInv(a, b);
-    printf("%llu, %llu, %llu, %llu \n", a, b, c, m);
+    llint a = 12;
+    llint b = 18;
+    double c = WELLRNG512a()*1000;//(WELLRNG512a()*(1<<54));
+
+    llint m = GCD(3, 7);
+    printf("%llu, %llu, %lf, %llu \n", a, b, c, m);
 
     return 0;
 }
