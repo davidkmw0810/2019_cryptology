@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/main/Github/2019_cryptology/rsa/rsa.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+time.h
+-
+rsa.h
+C:/main/Github/2019_cryptology/rsa/rsa.h
+
+C:/main/Github/2019_cryptology/rsa/rsa.h
+
