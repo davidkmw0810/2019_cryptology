@@ -15,10 +15,11 @@
 llint p, q, e, d, n;
 
 llint Mod(llint num, llint n){
-    if(num >= n)
-        return Mod(num - n, n);
-    else
-        return num;
+    if(n == 0) return num;
+    while(num >= n){
+        num -= n;
+    }
+    return num;
 }
 
 llint Qu(llint a, llint b){
@@ -92,10 +93,10 @@ llint ModPow(llint base, llint exp, llint n) {
 
     if(exp == 0){
         return base;
-    } else if(base - ((base >> 1) << 1) == 1){
-        return Mod(base*ModPow(base - 1, exp>>1, n), n);
-    } else if(base - ((base >> 1) << 1) == 0){
-        return Mod(ModPow(ModMul(base, base, n), exp>>1, n), n);
+    } else if(exp - ((exp >> 1) << 1) == 1){
+        return Mod(base*ModPow(base, exp - 1, n), n);
+    } else if(exp - ((exp >> 1) << 1) == 0){
+        return Mod(ModPow(base*base, exp>>1, n), n);
     }
 
 }
@@ -168,6 +169,20 @@ llint ModInv(llint a, llint m) {
     return s1;
 }
 
+llint GCD(llint a, llint b) {
+    llint prev_a;
+
+    while(b != 0) {
+        printf("GCD(%lld, %lld)\n", a, b);
+        prev_a = a;
+        a = b;
+        while(prev_a >= b) prev_a -= b;
+        b = prev_a;
+    }
+    //printf("GCD(%lld, %lld)\n\n", a, b);
+    return a;
+}
+
 /*
  * @brief     RSA 키를 생성하는 함수.
  * @param     llint *p   : 소수 p.
@@ -180,21 +195,21 @@ llint ModInv(llint a, llint m) {
  */
 void miniRSAKeygen(llint *p, llint *q, llint *e, llint *d, llint *n) {
 
-    do{
-        p = (llint)WELLRNG512a()*((2^64 - 1) - (2^53 + 1)) + (2^53 + 1);
-    } while(IsPrime(p, 4));
 
     do{
-        q = (llint)WELLRNG512a()*((2^64 - 1) - (2^53 + 1)) + (2^53 + 1);
-    } while(IsPrime(q, 4));
+        p = (llint)(WELLRNG512a()*((2^64 - 1) - (2^53 + 1)) + (2^53 + 1));
+        q = (llint)(WELLRNG512a()*((2^64 - 1) - (2^53 + 1)) + (2^53 + 1));
+        n = p*q;
+        //printf("p = %llu\n", *p);
+    } while((!IsPrime(*p, 4))&&(!IsPrime(*q, 4)));
 
-    n = p*q;
-    llint pi_n = (p - 1)*(q - 1);
+    llint pi_n = (*p - 1)*(*q - 1);
 
-    while(GCD(pi_n, e) != 1)
-        e = (llint)WELLRNG512a()*(pi_n - 4) + 3;
+    do{
+        *e = WELLRNG512a()*(pi_n - 4) + 3;
+    }while(GCD(pi_n, *e) != 1);
 
-    d = e*pi_n;
+    *d = (*e)*pi_n;
 
 }
 
@@ -207,25 +222,16 @@ void miniRSAKeygen(llint *p, llint *q, llint *e, llint *d, llint *n) {
  * @todo      과제 안내 문서의 제한사항을 참고하여 작성한다.
  */
 llint miniRSA(llint data, llint key, llint n) {
-    return 0;
-}
 
-llint GCD(llint a, llint b) {
-    llint prev_a;
+    llint result;
 
-    while(b != 0) {
-        printf("GCD(%lld, %lld)\n", a, b);
-        prev_a = a;
-        a = b;
-        while(prev_a >= b) prev_a -= b;
-        b = prev_a;
-    }
-    printf("GCD(%lld, %lld)\n\n", a, b);
-    return a;
+    result = ModPow(data, key, n);
+
+    return result;
 }
 
 int main(int argc, char* argv[]) {
-    /*
+
     byte plain_text[4] = {0x12, 0x34, 0x56, 0x78};
     llint plain_data, encrpyted_data, decrpyted_data;
     uint seed = time(NULL);
@@ -237,7 +243,7 @@ int main(int argc, char* argv[]) {
     InitWELLRNG512a(&seed);
 
     // RSA 키 생성
-    miniRSAKeygen(&p, &q, &e, &d, &n);
+    miniRSAKeygen(p, q, e, d, n);
     printf("0. Key generation is Success!\n ");
     printf("p : %llu\n q : %llu\n e : %llu\n d : %llu\n N : %llu\n\n", p, q, e, d, n);
 
@@ -256,13 +262,21 @@ int main(int argc, char* argv[]) {
 
 
     printf("%lf", WELLRNG512a());
-    */
+
+    /*
+    uint seconds = time(NULL);
+    InitWELLRNG512a(&seconds);
+
+
     llint a = 12;
     llint b = 18;
-    double c = WELLRNG512a()*1000;//(WELLRNG512a()*(1<<54));
+    llint c = WELLRNG512a()*1000;//(WELLRNG512a()*(1<<54));
+    llint *d = (llint*) malloc(sizeof(llint));
+    *d = c;
+    llint m = GCD(a, b);
+    printf("a=%llu, b=%llu, c=%llu, d=%llu, m=%llu \n", a, b, c, *d, m);
 
-    llint m = GCD(3, 7);
-    printf("%llu, %llu, %lf, %llu \n", a, b, c, m);
-
+    free(d);
+     */
     return 0;
 }
