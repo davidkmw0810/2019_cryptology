@@ -121,13 +121,12 @@ bool IsPrime(llint testNum, llint repeat) {
 
 
     if(ModPow(a, d, n) != 1){
-        for(int i = 0; i < r; i++){
-            if (!(ModPow(a, ModMul(ModPow(2, i, n), d, n), n) != n-1))
-                return IsPrime(testNum, repeat - 1);
+        for(int i = 0; i < r; i++) {
+            if (ModPow(a, ModMul(ModPow(2, i, n), d, n), n) != n - 1)
+                return FALSE;
         }
-        return FALSE;
     }
-
+    return IsPrime(testNum, repeat - 1);
 }
 
 /*
@@ -197,11 +196,13 @@ void miniRSAKeygen(llint *p, llint *q, llint *e, llint *d, llint *n) {
 
 
     do{
-        p = (llint)(WELLRNG512a()*((2^64 - 1) - (2^53 + 1)) + (2^53 + 1));
-        q = (llint)(WELLRNG512a()*((2^64 - 1) - (2^53 + 1)) + (2^53 + 1));
-        n = p*q;
+        *p = (llint)(WELLRNG512a()*((2^64 - 1) - (2^53 + 1)) + (2^53 + 1));
+        *q = (llint)(WELLRNG512a()*((2^64 - 1) - (2^53 + 1)) + (2^53 + 1));
+        *p = 5;
+        *q = 11;
+        *n = (*p)*(*q);
         //printf("p = %llu\n", *p);
-    } while((!IsPrime(*p, 4))&&(!IsPrime(*q, 4)));
+    } while(!((IsPrime(*p, 4))&&(IsPrime(*q, 4))));
 
     llint pi_n = (*p - 1)*(*q - 1);
 
@@ -243,7 +244,7 @@ int main(int argc, char* argv[]) {
     InitWELLRNG512a(&seed);
 
     // RSA 키 생성
-    miniRSAKeygen(p, q, e, d, n);
+    miniRSAKeygen(&p, &q, &e, &d, &n);
     printf("0. Key generation is Success!\n ");
     printf("p : %llu\n q : %llu\n e : %llu\n d : %llu\n N : %llu\n\n", p, q, e, d, n);
 
