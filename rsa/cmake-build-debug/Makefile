@@ -122,32 +122,32 @@ rsa/fast:
 	$(MAKE) -f CMakeFiles\rsa.dir\build.make CMakeFiles/rsa.dir/build
 .PHONY : rsa/fast
 
-rsa.obj: rsa.c.obj
+modinv.obj: modinv.c.obj
 
-.PHONY : rsa.obj
+.PHONY : modinv.obj
 
 # target to build an object file
-rsa.c.obj:
-	$(MAKE) -f CMakeFiles\rsa.dir\build.make CMakeFiles/rsa.dir/rsa.c.obj
-.PHONY : rsa.c.obj
+modinv.c.obj:
+	$(MAKE) -f CMakeFiles\rsa.dir\build.make CMakeFiles/rsa.dir/modinv.c.obj
+.PHONY : modinv.c.obj
 
-rsa.i: rsa.c.i
+modinv.i: modinv.c.i
 
-.PHONY : rsa.i
+.PHONY : modinv.i
 
 # target to preprocess a source file
-rsa.c.i:
-	$(MAKE) -f CMakeFiles\rsa.dir\build.make CMakeFiles/rsa.dir/rsa.c.i
-.PHONY : rsa.c.i
+modinv.c.i:
+	$(MAKE) -f CMakeFiles\rsa.dir\build.make CMakeFiles/rsa.dir/modinv.c.i
+.PHONY : modinv.c.i
 
-rsa.s: rsa.c.s
+modinv.s: modinv.c.s
 
-.PHONY : rsa.s
+.PHONY : modinv.s
 
 # target to generate assembly for a file
-rsa.c.s:
-	$(MAKE) -f CMakeFiles\rsa.dir\build.make CMakeFiles/rsa.dir/rsa.c.s
-.PHONY : rsa.c.s
+modinv.c.s:
+	$(MAKE) -f CMakeFiles\rsa.dir\build.make CMakeFiles/rsa.dir/modinv.c.s
+.PHONY : modinv.c.s
 
 # Help Target
 help:
@@ -158,9 +158,9 @@ help:
 	@echo ... rsa
 	@echo ... edit_cache
 	@echo ... rebuild_cache
-	@echo ... rsa.obj
-	@echo ... rsa.i
-	@echo ... rsa.s
+	@echo ... modinv.obj
+	@echo ... modinv.i
+	@echo ... modinv.s
 .PHONY : help
 
 

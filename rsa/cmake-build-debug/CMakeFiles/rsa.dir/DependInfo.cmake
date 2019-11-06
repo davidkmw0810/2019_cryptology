@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "C:/main/Github/2019_cryptology/rsa/rsa.c" "C:/main/Github/2019_cryptology/rsa/cmake-build-debug/CMakeFiles/rsa.dir/rsa.c.obj"
+  "C:/main/Github/2019_cryptology/rsa/modinv.c" "C:/main/Github/2019_cryptology/rsa/cmake-build-debug/CMakeFiles/rsa.dir/modinv.c.obj"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

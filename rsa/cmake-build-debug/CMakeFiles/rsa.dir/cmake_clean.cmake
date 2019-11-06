@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/rsa.dir/rsa.c.obj"
+  "CMakeFiles/rsa.dir/modinv.c.obj"
   "librsa.dll.a"
   "rsa.exe"
   "rsa.exe.manifest"

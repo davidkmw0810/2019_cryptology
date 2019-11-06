@@ -6,17 +6,7 @@
 
 #IncludeRegexTransform: 
 
-C:/main/Github/2019_cryptology/rsa/rsa.c
+C:/main/Github/2019_cryptology/rsa/modinv.c
 stdio.h
 -
-stdlib.h
--
-string.h
--
-time.h
--
-rsa.h
-C:/main/Github/2019_cryptology/rsa/rsa.h
-
-C:/main/Github/2019_cryptology/rsa/rsa.h
 

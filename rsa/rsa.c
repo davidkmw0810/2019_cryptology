@@ -73,11 +73,14 @@ llint ModMul(llint x, llint y, llint n) {
         return 0;
     }
     if(y - ((y >> 1) << 1) == 1){
-        return Mod(x + ModMul(x, y >> 1, n) + ModMul(x, y >> 1, n), n);
+        return Mod(x + ModMul(x+x, y >> 1, n), n);
     } else {
-        return Mod(ModMul(x, y >> 1, n) + ModMul(x, y >> 1, n), n);
+        do{
+            x = x*2;
+            y = y >>1;
+        } while(y - ((y >> 1) << 1) == 0);
+        return ModMul(x, y, n);
     }
-
 }
 
 /*
@@ -92,13 +95,16 @@ llint ModMul(llint x, llint y, llint n) {
 llint ModPow(llint base, llint exp, llint n) {
 
     if(exp == 0){
-        return base;
-    } else if(exp - ((exp >> 1) << 1) == 1){
+        return 1;
+    } else if(exp - ((exp >> 1) << 1) == 1){ // odd
         return Mod(base*ModPow(base, exp - 1, n), n);
-    } else if(exp - ((exp >> 1) << 1) == 0){
-        return Mod(ModPow(base*base, exp>>1, n), n);
+    } else if(exp - ((exp >> 1) << 1) == 0){ // even
+        do{
+            base = base*base;
+            exp = exp >> 1;
+        } while(exp - ((exp >> 1) << 1) == 0);
+        return ModPow(base, exp, n);
     }
-
 }
 
 /*
@@ -112,21 +118,27 @@ llint ModPow(llint base, llint exp, llint n) {
 bool IsPrime(llint testNum, llint repeat) {
 
     if(repeat == 0)
-        return TRUE;
+        return '1';
     llint s = testNum - 1;
     llint d = s;
     while(d - ((d >> 1) << 1) == 0) {d = d >> 1;}
     llint a = (s-2)*WELLRNG512a() + 1;
-    llint r = (s-1)*WELLRNG512a();
+    llint r = s-1;
+    bool check;
+    if(a^d != 1){
+        check = '0';
 
-
-    if(ModPow(a, d, n) != 1){
-        for(int i = 0; i < r; i++) {
-            if (ModPow(a, ModMul(ModPow(2, i, n), d, n), n) != n - 1)
-                return FALSE;
+        for(int i = 0; i <= r; i++) {
+            if (a^((2^i)*d) == testNum - 1)
+                check = '1';
         }
-    }
-    return IsPrime(testNum, repeat - 1);
+    } else
+        check = '1';
+
+    if(check == '1')
+        return IsPrime(testNum, repeat - 1);
+    else
+        return '0';
 }
 
 /*
@@ -139,7 +151,11 @@ bool IsPrime(llint testNum, llint repeat) {
 llint ModInv(llint a, llint m) {
     llint s0 = 1, s1 = 0;
     llint t0 = 0, t1 = 1;
-    llint r0 = a, r1 = m;
+    llint r0, r1;
+    if(m > a)
+        r0 = m, r1 = a;
+    else
+        r0 = a, r1 = m;
     llint q0 = 0, q1 = Qu(r0, r1);
     llint buffer;
     llint n = 1;
@@ -194,23 +210,36 @@ llint GCD(llint a, llint b) {
  */
 void miniRSAKeygen(llint *p, llint *q, llint *e, llint *d, llint *n) {
 
-
+    bool check1;
+    bool check2;
     do{
         *p = (llint)(WELLRNG512a()*((2^64 - 1) - (2^53 + 1)) + (2^53 + 1));
         *q = (llint)(WELLRNG512a()*((2^64 - 1) - (2^53 + 1)) + (2^53 + 1));
         *p = 5;
         *q = 11;
         *n = (*p)*(*q);
+
+        if(IsPrime(*p, 4) == '1')
+            check1 = '1';
+        else
+            check1 = '0';
+
+        if(IsPrime(*q, 4) == '1')
+            check2 = '1';
+        else
+            check2 = '0';
+
         //printf("p = %llu\n", *p);
-    } while(!((IsPrime(*p, 4))&&(IsPrime(*q, 4))));
+    } while(!(check1 == '1' && check2 == '1'));
 
     llint pi_n = (*p - 1)*(*q - 1);
 
     do{
         *e = WELLRNG512a()*(pi_n - 4) + 3;
-    }while(GCD(pi_n, *e) != 1);
+        *e = 7;
+    }while(GCD(pi_n, *e) != 1 || *e >= pi_n);
 
-    *d = (*e)*pi_n;
+    *d = ModInv(*e, pi_n);
 
 }
 
@@ -226,7 +255,7 @@ llint miniRSA(llint data, llint key, llint n) {
 
     llint result;
 
-    result = ModPow(data, key, n);
+    result = Mod(data^key, n);
 
     return result;
 }

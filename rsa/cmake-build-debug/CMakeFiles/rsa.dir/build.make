@@ -56,27 +56,27 @@ include CMakeFiles/rsa.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/rsa.dir/flags.make
 
-CMakeFiles/rsa.dir/rsa.c.obj: CMakeFiles/rsa.dir/flags.make
-CMakeFiles/rsa.dir/rsa.c.obj: ../rsa.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\main\Github\2019_cryptology\rsa\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/rsa.dir/rsa.c.obj"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\rsa.dir\rsa.c.obj   -c C:\main\Github\2019_cryptology\rsa\rsa.c
+CMakeFiles/rsa.dir/modinv.c.obj: CMakeFiles/rsa.dir/flags.make
+CMakeFiles/rsa.dir/modinv.c.obj: ../modinv.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\main\Github\2019_cryptology\rsa\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/rsa.dir/modinv.c.obj"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\rsa.dir\modinv.c.obj   -c C:\main\Github\2019_cryptology\rsa\modinv.c
 
-CMakeFiles/rsa.dir/rsa.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/rsa.dir/rsa.c.i"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\main\Github\2019_cryptology\rsa\rsa.c > CMakeFiles\rsa.dir\rsa.c.i
+CMakeFiles/rsa.dir/modinv.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/rsa.dir/modinv.c.i"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\main\Github\2019_cryptology\rsa\modinv.c > CMakeFiles\rsa.dir\modinv.c.i
 
-CMakeFiles/rsa.dir/rsa.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/rsa.dir/rsa.c.s"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\main\Github\2019_cryptology\rsa\rsa.c -o CMakeFiles\rsa.dir\rsa.c.s
+CMakeFiles/rsa.dir/modinv.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/rsa.dir/modinv.c.s"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\main\Github\2019_cryptology\rsa\modinv.c -o CMakeFiles\rsa.dir\modinv.c.s
 
 # Object files for target rsa
 rsa_OBJECTS = \
-"CMakeFiles/rsa.dir/rsa.c.obj"
+"CMakeFiles/rsa.dir/modinv.c.obj"
 
 # External object files for target rsa
 rsa_EXTERNAL_OBJECTS =
 
-rsa.exe: CMakeFiles/rsa.dir/rsa.c.obj
+rsa.exe: CMakeFiles/rsa.dir/modinv.c.obj
 rsa.exe: CMakeFiles/rsa.dir/build.make
 rsa.exe: CMakeFiles/rsa.dir/linklibs.rsp
 rsa.exe: CMakeFiles/rsa.dir/objects1.rsp

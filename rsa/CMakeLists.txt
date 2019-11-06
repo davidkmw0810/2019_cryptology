@@ -3,4 +3,4 @@ project(rsa C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(rsa rsa.c)
+add_executable(rsa modinv.c)

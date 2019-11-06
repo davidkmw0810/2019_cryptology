@@ -76,10 +76,7 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="C:/main/Github/2019_cryptology/rsa/rsa.c">
-			<Option target="rsa"/>
-		</Unit>
-		<Unit filename="C:/main/Github/2019_cryptology/rsa/rsa.h">
+		<Unit filename="C:/main/Github/2019_cryptology/rsa/modinv.c">
 			<Option target="rsa"/>
 		</Unit>
 		<Unit filename="C:/main/Github/2019_cryptology/rsa/CMakeLists.txt">
